@@ -1,0 +1,59 @@
+---
+# fedora_camel tasks file for fedora_commons
+
+- name: fedora camel | Copy fedora_camel_toolbox script to /opt 
+  copy: src=fedora_camel_toolbox.script dest=/opt/fedora_camel_toolbox.script
+  tags:
+    - install
+    - update
+
+- name: fedora camel | Run toolbox script with karaf
+  shell: "export JAVA_HOME={{java_home.stdout}} && {{ karaf_base }}/bin/client -u karaf -h localhost -a 8101 -f /opt/fedora_camel_toolbox.script"
+  register: toolbox
+  changed_when: '"is already installed" not in toolbox.stdout'
+  tags:
+    - install
+    - update
+
+- name: fedora camel | Include the camel solr cfg file
+  template: src=org.fcrepo.camel.indexing.solr.cfg.j2 dest={{ karaf_base }}/etc/org.fcrepo.camel.indexing.solr.cfg
+  tags:
+    - install
+    - config
+    - update
+
+- name: fedora camel | Include the camel triplestore cfg file
+  template: src=org.fcrepo.camel.indexing.triplestore.cfg.j2 dest={{ karaf_base }}/etc/org.fcrepo.camel.indexing.triplestore.cfg
+  tags:
+    - install
+    - config
+    - update
+
+- name: fedora camel | Install the  audit service with karaf
+  shell: "export JAVA_HOME={{java_home.stdout}} && {{ karaf_base }}/bin/client -u karaf -h localhost -a 8101 'feature:install fcrepo-audit-triplestore'"
+  register: audit_result
+  changed_when: '"is already installed" not in audit_result.stdout'
+  tags:
+    - install
+    - update
+
+- name: fedora camel | Include the camel fixity cfg file
+  template: src=org.fcrepo.camel.fixity.cfg.j2 dest={{ karaf_base }}/etc/org.fcrepo.camel.fixity.cfg
+  tags:
+    - install
+    - config
+    - update
+
+- name: fedora camel | Include the camel serialization cfg file
+  template: src=org.fcrepo.camel.serialization.cfg.j2 dest={{ karaf_base }}/etc/org.fcrepo.camel.serialization.cfg
+  tags:
+    - install
+    - config
+    - update
+
+- name: fedora camel | Include the camel reindexing cfg file
+  template: src=org.fcrepo.camel.reindexing.cfg.j2 dest={{ karaf_base }}/etc/org.fcrepo.camel.reindexing.cfg
+  tags:
+    - install
+    - config
+    - update

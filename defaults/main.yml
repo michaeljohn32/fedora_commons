@@ -1,0 +1,51 @@
+---
+# defaults file for fedora_commons
+
+# tomcat setup
+webapps_dir: /usr/share/webapps
+tomcat_dir: /usr/share/tomcat
+
+# fuseki setup
+install_fuseki: true
+fuseki_version: 2.3.1
+fuseki_deploy_context: fuseki
+fuseki_base: /etc/fuseki
+fuseki_base_url: http://archive.apache.org/dist/jena/binaries
+
+#solr setup
+install_solr: true
+solr_version: 4.10.3
+solr_home: /usr/share/solr
+solr_deploy_context: solr
+solr_base_url: http://archive.apache.org/dist/lucene/solr/{{ solr_version }}
+solr_server_port: 8080
+
+#karaf setup
+install_karaf: true
+karaf_version: 4.0.5
+karaf_base: /opt/karaf
+karaf_base_url: http://archive.apache.org/dist/karaf/{{ karaf_version }}
+
+# fedora setup
+fedora_version: 4.5.1-SNAPSHOT
+fedora_admin: fedoraAdmin
+fedora_pwd: secret321
+fedora_users: 
+  - user:
+     name: user1
+     pwd: password1
+     roles: fedoraUser
+  - user:
+     name: user2
+     pwd: password2
+     roles: fedoraUser
+fedora_roles:
+  - fedoraUser
+  - fedoraAdmin
+fedora_home: /usr/share/fedora
+fedora_auth: true 
+fedora_audit: true 
+fedora_camel: true
+fedora_audit_location: /audit
+fedora_deploy_context: fcrepo
+base_url: "https://github.com/fcrepo4-exts/fcrepo-webapp-plus/releases/download/fcrepo-webapp-plus-{{ fedora_version }}"

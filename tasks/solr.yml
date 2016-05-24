@@ -1,0 +1,155 @@
+
+# solr tasks file for fedora_commons
+
+- name: solr | Create solr home and downloads directory 
+  file:
+    path: "{{ solr_home }}/downloads"
+    state: directory
+    owner: tomcat
+    group: tomcat
+    mode: 0755
+  tags:
+    - install
+    - update
+
+- name: solr | Remove solr home
+  file:
+    path: "{{ solr_home }}"
+  tags:
+    - remove
+
+- name: solr | Check if solr release has been downloaded already
+  stat: 
+    path: "{{ solr_home }}/downloads/solr-{{ solr_version }}.tgz"
+  register: solr_file_download
+  tags:
+    - install
+    - update
+
+- name: solr | Download solr release file
+  get_url:
+    url: "{{ solr_base_url }}/solr-{{ solr_version }}.tgz"
+    dest: "{{ solr_home }}/downloads"
+  when: not solr_file_download.stat.exists
+  tags:
+    - install
+    - update
+
+- name: solr | Copy solr release file to /tmp
+  command: cp {{ solr_home }}/downloads/solr-{{ solr_version }}.tgz /tmp/
+  args:
+    creates: /tmp/solr-{{ solr_version }}.tgz
+  tags:
+    - install
+    - update
+
+- name: solr | Extract solr war file
+  command: /bin/tar -xzf solr-{{ solr_version }}.tgz
+  args:
+    creates: /tmp/solr-{{ solr_version }}
+    chdir: /tmp
+  tags:
+    - install
+    - update
+
+- name: solr | Deploy solr release file
+  command: cp /tmp/solr-{{ solr_version }}/dist/solr-{{ solr_version }}.war {{ webapps_dir }}/{{ solr_deploy_context }}.war
+  args:
+    creates: "{{ webapps_dir }}/{{ solr_deploy_context }}.war"
+  tags:
+    - install
+    - update
+
+- name: solr | Remove solr release file 
+  file:
+    path: "{{ webapps_dir }}/{{ solr_deploy_context }}.war"
+  tags:
+    - remove
+
+- name: solr | Check if commons-logging has been downloaded already
+  stat: 
+    path: "{{ solr_home }}/downloads/commons-logging-1.1.2.jar"
+  register: commonslogging
+  tags:
+    - install
+    - update
+
+- name: solr | Download commons-logging library
+  get_url:
+    url: "http://repo1.maven.org/maven2/commons-logging/commons-logging/1.1.2/commons-logging-1.1.2.jar"
+    dest: "{{ solr_home }}/downloads"
+  when: not commonslogging.stat.exists
+  tags:
+    - install
+    - update
+
+- name: solr | Copy commons-logging to tomcat library
+  copy: remote_src=True src={{ solr_home }}/downloads/commons-logging-1.1.2.jar dest={{ tomcat_dir }}/lib/
+  tags:
+    - install
+    - update
+
+- name: solr | Remove commons-logging
+  file:
+    path: "{{ tomcat_dir }}/lib/commons-logging-1.1.2.jar"
+  tags:
+    - remove
+
+- name: solr | Determine log4j filenames
+  shell: ls -1 /tmp/solr-{{ solr_version }}/example/lib/ext | grep ^log4j
+  register: log4j_names
+  changed_when: False
+  tags:
+    - install
+    - update
+
+- name: solr | Copy log4j files from solr to tomcat library
+  copy: remote_src=True src=/tmp/solr-{{ solr_version }}/example/lib/ext/{{ item }} dest={{ tomcat_dir }}/lib/
+  with_items: "{{ log4j_names.stdout_lines }}"
+  tags:
+    - install
+    - update
+
+- name: solr | Determine slf4j filenames
+  shell: ls -1 /tmp/solr-{{ solr_version }}/example/lib/ext | grep ^slf4j
+  register: slf4j_names
+  changed_when: False
+  tags:
+    - install
+    - update
+
+- name: solr | Copy slf4j files from solr to tomcat library
+  copy: remote_src=True src=/tmp/solr-{{ solr_version }}/example/lib/ext/{{ item }} dest={{ tomcat_dir }}/lib/
+  with_items: "{{ slf4j_names.stdout_lines }}"
+  tags:
+    - install
+    - update
+
+- name: solr | Copy default home files to solr_home
+  shell: cp -R /tmp/solr-{{ solr_version }}/example/solr/* {{ solr_home}}/
+  args:
+    creates: "{{ solr_home }}/solr.xml"
+  tags:
+    - install
+
+- name: solr | Copy schema.xml to collection
+  copy: src=schema.xml dest={{ solr_home }}/collection1/conf/
+  tags:
+    - install
+
+- name: solr | Ensure tomcat user has access to solr
+  file: dest={{ solr_home }} owner=tomcat group=tomcat recurse=yes
+  tags:
+    - install
+    - upgrade
+
+- name: solr | Ensure velocity.log is existing
+  file: dest={{ tomcat_dir }}/velocity.log state=touch owner=tomcat group=tomcat
+  tags:
+    - install
+    - upgrade
+
+- name: solr | Remove velocity.log
+  file: dest={{ tomcat_dir }}/velocity.log state=absent owner=tomcat group=tomcat
+  tags:
+    - remove

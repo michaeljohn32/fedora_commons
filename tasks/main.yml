@@ -1,0 +1,88 @@
+---
+# tasks file for fedora_commons
+
+- name: Install prerequisites from fcrepo4-vagrant-base-box bootstrap.sh
+  yum: name={{ item }} state=latest
+  with_items: #htop and fish are not in the default repo
+    - gcc 
+    - gcc-c++
+    - make
+    - maven
+    - openssl-devel
+    - git
+    - vim
+    - wget
+    - curl
+    - tree
+    - zsh
+  tags:
+    - install
+    - upgrade
+    - config
+
+- name: Create the ingest directory
+  file: path=/mnt/ingest state=directory owner=tomcat group=tomcat
+  tags:
+    - install
+    - config
+
+- name: Set up roles in Tomcat
+  lineinfile:
+    dest: /usr/share/tomcat/conf/tomcat-users.xml
+    line: <role rolename="{{ item }}"/>
+    regexp: 'rolename="{{ item }}'
+    insertafter: ^<tomcat-users>$
+    state: present
+  with_items: '{{ fedora_roles }}'
+  tags:
+    - install
+    - config
+
+- name: Set up admin user in Tomcat
+  lineinfile:
+    dest: /usr/share/tomcat/conf/tomcat-users.xml
+    line: <user username="{{ fedora_admin }}" password="{{ fedora_pwd }}" roles="fedoraAdmin"/>
+    regexp: '<user username="{{ fedora_admin }}" password="{{ fedora_pwd }}" roles="fedoraAdmin"/>'
+    insertafter: \<role
+    state: present
+  tags:
+    - install
+    - config
+
+- name: Set up users in Tomcat
+  lineinfile:
+    dest: /usr/share/tomcat/conf/tomcat-users.xml
+    line: <user username="{{ item.user.name }}" password="{{ item.user.pwd }}" roles="{{ item.user.roles }}"/>
+    regexp: 'username="{{ item.user.name }}" password="{{ item.user.pwd }}" roles="{{ item.user.roles }}"'
+    insertafter: \<role
+    state: present
+  with_items: '{{ fedora_users }}'
+  tags:
+    - install
+    - config
+
+- name: Include solr
+  include: solr.yml
+  when: install_solr
+
+- name: Include fuseki
+  include: fuseki.yml
+  when: install_fuseki
+
+- name: Include karaf
+  include: karaf.yml
+  when: install_karaf
+  
+- name: Include determine_fedora_version 
+  include: determine_fedora_version.yml
+  tags:
+    - install
+    - upgrade
+
+- name: Deploy fedora war
+  include: deploy_fedora_war.yml
+  when: True
+
+- name: Include camel
+  include: fedora_camel_toolbox.yml
+  when: fedora_camel

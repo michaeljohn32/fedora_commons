@@ -1,0 +1,79 @@
+---
+# fuseki tasks file for fedora_commons
+
+- name: fuseki | Create fuseki config and downloads directory 
+  file:
+    path: "{{ fuseki_base }}/{{ item }}"
+    state: directory
+    owner: tomcat
+    group: tomcat
+    mode: 0755
+  with_items:
+    - downloads
+    - configuration
+  tags:
+    - install
+    - update
+
+- name: fuseki| Remove fuseki base 
+  file: src="{{ fuseki_base }}" state=absent
+  tags:
+    - remove
+
+- name: fuseki | Check if fuseki release has been downloaded already
+  stat: 
+    path: "{{ fuseki_base }}/downloads/apache-jena-fuseki-{{ fuseki_version }}-distribution.tar.gz"
+  register: fuseki_file_download
+  tags:
+    - install
+    - update
+
+- name: fuseki | Download fuseki release file
+  get_url:
+    url: "{{ fuseki_base_url }}/apache-jena-fuseki-{{ fuseki_version }}.tar.gz"
+    dest: "{{ fuseki_base }}/downloads/apache-jena-fuseki-{{ fuseki_version }}-distribution.tar.gz"
+  when: not fuseki_file_download.stat.exists
+  tags:
+    - install
+    - update
+
+- name: fuseki | Copy fuseki release file to /tmp
+  command: cp {{ fuseki_base }}/downloads/apache-jena-fuseki-{{ fuseki_version }}-distribution.tar.gz /tmp/
+  args:
+    creates: /tmp/apache-jena-fuseki-{{ fuseki_version }}-distribution.tar.gz
+  tags:
+    - install
+    - update
+
+- name: fuseki | Extract fuseki war file
+  command: /bin/tar -xzf apache-jena-fuseki-{{ fuseki_version }}-distribution.tar.gz
+  args:
+    creates: /tmp/apache-jena-fuseki-{{ fuseki_version }}
+    chdir: /tmp
+  tags:
+    - install
+    - update
+
+- name: fuseki | Deploy fuseki release file
+  command: cp /tmp/apache-jena-fuseki-{{ fuseki_version }}/fuseki.war {{ webapps_dir }}/{{ fuseki_deploy_context }}.war
+  args:
+    creates: "{{ webapps_dir }}/{{ fuseki_deploy_context }}.war"
+  tags:
+    - install
+    - update
+
+- name: fuseki | Remove fuseki release file
+  file: src="{{ webapps_dir }}/{{ fuseki_deploy_context }}.war" state=absent
+  tags:
+    - remove
+
+- name: fuseki | Copy shiro.ini to {{ fuseki_base }}
+  copy: src=shiro.ini dest={{ fuseki_base }}
+  tags:
+    - install
+
+- name: fuseki | Copy test.ttl to {{ fuseki_base }}/
+  copy: src=test.ttl dest={{ fuseki_base }}/configuration/
+  tags:
+    - install
+

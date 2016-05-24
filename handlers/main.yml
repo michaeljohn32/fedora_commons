@@ -1,0 +1,10 @@
+---
+# handlers file for fedora_commons
+- name: restart tomcat
+  service:
+    name: tomcat
+    state: restarted
+  tags:
+    - install
+    - config
+    - upgrade

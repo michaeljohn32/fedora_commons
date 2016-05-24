@@ -1,0 +1,55 @@
+---
+# tasks file for fedora_commons
+
+- name: fedora war | Create fedora data directory
+  file:
+    path: "{{ fedora_home }}/fcrepo4-data"
+    state: directory
+    owner: tomcat
+    group: tomcat
+    mode: 0755
+  tags:
+    - install
+    - config
+
+- name: fedora war | Remove fedora home
+  file: path="{{ fedora_home }}" state=absent
+  tags:
+    - remove
+  
+- name: fedora war | Create fedora download directory
+  file:
+    path: "{{ fedora_home }}/fcrepo4-downloads"
+    state: directory
+    owner: tomcat
+    group: tomcat
+    mode: 0755
+  tags:
+    - install
+    - config
+
+- name: fedora war | Check if fedora release has been downloaded already
+  stat: 
+    path: "{{ fedora_home }}/fcrepo4-downloads/{{ war_filename }}"
+  register: war_file_download
+  tags:
+    - install
+    - config
+
+- name: fedora war | Download fedora release file
+  get_url:
+    url: "{{ base_url }}/{{ war_filename }}"
+    dest: "{{ fedora_home }}/fcrepo4-downloads/{{ war_filename }}"
+  when: not war_file_download.stat.exists
+  tags:
+    - install
+    - config
+
+- name: fedora war | Deploy fedora release file
+  command: cp {{ fedora_home }}/fcrepo4-downloads/{{ war_filename }} {{ webapps_dir }}/{{ fedora_deploy_context }}.war
+  args:
+    creates: "{{ webapps_dir }}/{{ fedora_deploy_context }}.war"
+  tags:
+    - install
+    - config
+

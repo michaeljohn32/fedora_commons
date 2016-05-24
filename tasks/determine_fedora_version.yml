@@ -1,0 +1,26 @@
+---
+# determine_fedora_version tasks file for fedora_commons
+- name: Do we include WebAC and Audit in fedora?
+  set_fact:
+    war_filename: fcrepo-webapp-plus-webac-audit-{{ fedora_version }}.war
+  when: fedora_auth and fedora_audit
+  tags:
+    - install
+- name: Do we include WebAC only?
+  set_fact:
+    war_filename: fcrepo-webapp-plus-webac-{{ fedora_version }}.war
+  when: fedora_auth and not fedora_audit
+  tags:
+    - install
+- name: Do we include Audit only?
+  set_fact:
+    war_filename: fcrepo-webapp-plus-audit-{{ fedora_version }}.war
+  when: not fedora_auth and fedora_audit
+  tags:
+    - install
+- name: Do we install base fedora?
+  set_fact:
+    war_filename: fcrepo-webapp-plus-{{ fedora_version }}.war
+  when: not fedora_auth and not fedora_audit
+  tags:
+    - install
