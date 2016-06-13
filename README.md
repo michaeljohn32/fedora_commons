@@ -19,6 +19,8 @@ Role Variables
 * Tomcat
     - webapps_dir - string - the directory were war files are placed
     - tomcat_dir - string - the base of the directory where tomcat is installed
+    - tomcat_user - string - the user that is currently used by tomcat
+    - tomcat_group - string - the group that is currently used in tomcat
 * Fuseki
     - install_fuseki - bool - install fuseki?
     - fuseki_version - string - the version of fuseki to install
