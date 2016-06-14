@@ -27,7 +27,7 @@ karaf_base: /opt/karaf
 karaf_base_url: http://archive.apache.org/dist/karaf/{{ karaf_version }}
 
 # fedora setup
-fedora_version: 4.5.1-SNAPSHOT
+fedora_version: 4.5.1
 fedora_admin: fedoraAdmin
 fedora_pwd: secret321
 fedora_users: 
