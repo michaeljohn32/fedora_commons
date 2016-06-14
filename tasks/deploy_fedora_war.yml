@@ -5,8 +5,8 @@
   file:
     path: "{{ fedora_home }}/fcrepo4-data"
     state: directory
-    owner: tomcat
-    group: tomcat
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
     mode: 0755
   tags:
     - install
@@ -21,8 +21,8 @@
   file:
     path: "{{ fedora_home }}/fcrepo4-downloads"
     state: directory
-    owner: tomcat
-    group: tomcat
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
     mode: 0755
   tags:
     - install
