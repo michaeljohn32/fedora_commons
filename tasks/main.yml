@@ -21,7 +21,7 @@
     - config
 
 - name: Create the ingest directory
-  file: path=/mnt/ingest state=directory owner={{ tomcat_user }} group= {{ tomcat_group }}
+  file: path=/mnt/ingest state=directory owner={{ tomcat_user }} group={{ tomcat_group }}
   tags:
     - install
     - config
