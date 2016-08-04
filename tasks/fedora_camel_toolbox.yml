@@ -33,6 +33,7 @@
   shell: "export JAVA_HOME={{java_home.stdout}} && {{ karaf_base }}/bin/client -u karaf -h localhost -a 8101 'feature:install fcrepo-audit-triplestore'"
   register: audit_result
   changed_when: '"is already installed" not in audit_result.stdout'
+  when: install_audit_service
   tags:
     - install
     - update

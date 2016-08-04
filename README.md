@@ -38,7 +38,8 @@ Role Variables
     - install_karaf - bool - install karaf?
     - karaf_version - string - the version of karaf to install
     - karaf_base - string - the main directory that karaf should be referenced in
-    - karaf_base_url - strin - the base of the url where karaf is downloaded from
+    - karaf_base_url - string - the base of the url where karaf is downloaded from
+    - install_audit_service - bool - install the audit service with karaf (may generate double triples) 
 * Fedora
     - fedora_version - string - the version to run
     - fedora_admin - string - the name of the admin user

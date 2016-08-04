@@ -27,6 +27,7 @@ install_karaf: true
 karaf_version: 4.0.5
 karaf_base: /opt/karaf
 karaf_base_url: http://archive.apache.org/dist/karaf/{{ karaf_version }}
+install_audit_service: false
 
 # fedora setup
 fedora_version: 4.5.1
