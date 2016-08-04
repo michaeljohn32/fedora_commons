@@ -7,7 +7,7 @@ fcrepo.authPassword={{ fedora_pwd }}
 fcrepo.authHost=
 
 # The baseUrl for the fedora repository.
-fcrepo.baseUrl=localhost:8080/fcrepo/rest
+fcrepo.baseUrl={{ inventory_hostname }}:8080/fcrepo/rest
 
 # If you would like to index only those objects with a type `indexing:Indexable`,
 # set this property to `true`
