@@ -4,6 +4,8 @@
 # tomcat setup
 webapps_dir: /usr/share/webapps
 tomcat_dir: /usr/share/tomcat
+tomcat_user: tomcat
+tomcat_group: tomcat
 
 # fuseki setup
 install_fuseki: true
