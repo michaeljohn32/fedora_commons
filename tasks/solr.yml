@@ -99,6 +99,7 @@
   shell: ls -1 /tmp/solr-{{ solr_version }}/example/lib/ext | grep ^log4j
   register: log4j_names
   changed_when: False
+  check_mode: no 
   tags:
     - install
     - update

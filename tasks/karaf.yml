@@ -80,13 +80,26 @@
 
 - name: karaf | Find out the current java_home
   shell: alternatives --display java | grep 'link currently points to' | sed 's/link\ currently\ points\ to\s//g' | sed 's/^\ //g' | sed 's/\/bin\/java$//g'
-  register: java_home
+  register: java_home_res
+  when: java_home is not defined
   changed_when: false
   tags:
     - install
+    - update
+    - config
 
+- name: karaf | set java_home based on alternatives result
+  set_fact:
+    java_home: java_home_res.stdout
+  when: java_home_res is defined
+  changed_when: false
+  tags:
+    - instal
+    - update
+    - configl
+   
 - name: karaf | Run karaf service installation
-  shell: "export JAVA_HOME={{ java_home.stdout }} && {{ karaf_base }}/install_service/karaf_service_install.sh"
+  shell: "export JAVA_HOME={{ java_home }} && {{ karaf_base }}/install_service/karaf_service_install.sh"
   args:
     creates: "{{ karaf_base }}/bin/karaf.service"
   tags:
@@ -96,7 +109,7 @@
   lineinfile:
     dest: "{{ karaf_base }}/bin/karaf.service"
     insertafter: ^\[Service\]$
-    line: Environment=JAVA_HOME={{ java_home.stdout }} 
+    line: Environment=JAVA_HOME={{ java_home }} 
     regexp: ^Environment\=JAVA_HOME
     state: present
   tags:
@@ -107,6 +120,7 @@
   ignore_errors: yes
   register: service_changes
   changed_when: false
+  check_mode: no
   tags:
     - install
 

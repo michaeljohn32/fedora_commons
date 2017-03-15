@@ -35,6 +35,7 @@ Role Variables
     - solr_base_url - string - the base of the url where solr will be downloaded from
     - solr_server_port - the port that solr will run in
 * Karaf
+    - java_home - string - used throughout the karaf installation and service instantiation (use group_vars or host_vars for this), by default it will use alternatives' output
     - install_karaf - bool - install karaf?
     - karaf_version - string - the version of karaf to install
     - karaf_base - string - the main directory that karaf should be referenced in
