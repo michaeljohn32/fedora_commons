@@ -74,6 +74,8 @@
 
 - name: fuseki | Copy test.ttl to {{ fuseki_base }}/
   copy: src=test.ttl dest={{ fuseki_base }}/configuration/
+  args:
+    creates: "{{ fuseki_base }}/configuration/test.ttl"
   tags:
     - install
 

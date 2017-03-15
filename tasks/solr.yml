@@ -107,6 +107,7 @@
 - name: solr | Copy log4j files from solr to tomcat library
   copy: remote_src=True src=/tmp/solr-{{ solr_version }}/example/lib/ext/{{ item }} dest={{ tomcat_dir }}/lib/
   with_items: "{{ log4j_names.stdout_lines }}"
+  when: log4j_names is defined
   tags:
     - install
     - update
