@@ -8,7 +8,7 @@
     - update
 
 - name: fedora camel | Run toolbox script with karaf
-  shell: "export JAVA_HOME={{java_home.stdout}} && {{ karaf_base }}/bin/client -u karaf -h localhost -a 8101 -f /opt/fedora_camel_toolbox.script"
+  shell: "export JAVA_HOME={{ java_home }} && {{ karaf_base }}/bin/client -u karaf -h localhost -a 8101 -f /opt/fedora_camel_toolbox.script"
   register: toolbox
   changed_when: '"is already installed" not in toolbox.stdout'
   tags:
