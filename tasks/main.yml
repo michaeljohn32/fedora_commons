@@ -1,5 +1,16 @@
 ---
 # tasks file for fedora_commons
+- name: Set up roles in Tomcat
+  set_fact:
+    tomcat_manager_users: "{{ fedora_users }}"
+    tomcat_manager_roles: "{{ fedora_roles }}"
+  tags:
+    - install
+    - config
+
+- name: include tomcat role
+  import_role:
+    name: tomcat
 
 - name: Install prerequisites from fcrepo4-vagrant-base-box bootstrap.sh
   yum: name={{ item }} state=latest
@@ -22,41 +33,6 @@
 
 - name: Create the ingest directory
   file: path=/mnt/ingest state=directory owner={{ tomcat_user }} group={{ tomcat_group }}
-  tags:
-    - install
-    - config
-
-- name: Set up roles in Tomcat
-  lineinfile:
-    dest: /usr/share/tomcat/conf/tomcat-users.xml
-    line: <role rolename="{{ item }}"/>
-    regexp: 'rolename="{{ item }}'
-    insertafter: ^<tomcat-users>$
-    state: present
-  with_items: '{{ fedora_roles }}'
-  tags:
-    - install
-    - config
-
-- name: Set up admin user in Tomcat
-  lineinfile:
-    dest: /usr/share/tomcat/conf/tomcat-users.xml
-    line: <user username="{{ fedora_admin }}" password="{{ fedora_pwd }}" roles="fedoraAdmin"/>
-    regexp: '<user username="{{ fedora_admin }}" password="{{ fedora_pwd }}" roles="fedoraAdmin"/>'
-    insertafter: \<role
-    state: present
-  tags:
-    - install
-    - config
-
-- name: Set up users in Tomcat
-  lineinfile:
-    dest: /usr/share/tomcat/conf/tomcat-users.xml
-    line: <user username="{{ item.user.name }}" password="{{ item.user.pwd }}" roles="{{ item.user.roles }}"/>
-    regexp: 'username="{{ item.user.name }}" password="{{ item.user.pwd }}" roles="{{ item.user.roles }}"'
-    insertafter: \<role
-    state: present
-  with_items: '{{ fedora_users }}'
   tags:
     - install
     - config

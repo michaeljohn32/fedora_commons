@@ -34,14 +34,15 @@ fedora_version: 4.5.1
 fedora_admin: fedoraAdmin
 fedora_pwd: secret321
 fedora_users: 
-  - user:
-     name: user1
-     pwd: password1
-     roles: fedoraUser
-  - user:
-     name: user2
-     pwd: password2
-     roles: fedoraUser
+  - name: fedoraAdmin
+    password: secret321
+    roles: fedoraAdmin 
+  - name: user1
+    password: password1
+    roles: fedoraUser
+  - name: user2
+    password: password2
+    roles: fedoraUser
 fedora_roles:
   - fedoraUser
   - fedoraAdmin
