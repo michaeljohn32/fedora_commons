@@ -10,7 +10,6 @@
     mode: 0755
   tags:
     - install
-    - config
 
 - name: fedora war | Remove fedora home
   file: path="{{ fedora_home }}" state=absent
@@ -26,7 +25,6 @@
     mode: 0755
   tags:
     - install
-    - config
 
 - name: fedora war | Check if fedora release has been downloaded already
   stat: 
@@ -34,7 +32,6 @@
   register: war_file_download
   tags:
     - install
-    - config
 
 - name: fedora war | Download fedora release file
   get_url:
@@ -43,7 +40,6 @@
   when: not war_file_download.stat.exists
   tags:
     - install
-    - config
 
 - name: fedora war | Deploy fedora release file
   command: cp {{ fedora_home }}/fcrepo4-downloads/{{ war_filename }} {{ webapps_dir }}/{{ fedora_deploy_context }}.war
@@ -51,5 +47,4 @@
     creates: "{{ webapps_dir }}/{{ fedora_deploy_context }}.war"
   tags:
     - install
-    - config
 
