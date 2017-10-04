@@ -96,7 +96,7 @@
   tags:
     - instal
     - update
-    - configl
+    - config
    
 - name: karaf | Run karaf service installation
   shell: "export JAVA_HOME={{ java_home }} && {{ karaf_base }}/install_service/karaf_service_install.sh"
