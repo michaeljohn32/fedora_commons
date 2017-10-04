@@ -52,6 +52,7 @@ Role Variables
     - fedora_audit - bool - use audit capabilities
     - fedroa_camel - bool - use the camel toolbox scripts 
     - fedora_deploy_context - string - the tomcat context to access fcrepo
+    - fedora_base_url - string - the url of the fedora instance (default: http://localhost:8080/fcrepo/rest)
     - base_url - string - base of the url from which to download the fcrepo war files
 
 Dependencies

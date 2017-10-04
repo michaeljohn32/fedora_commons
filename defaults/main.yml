@@ -1,5 +1,6 @@
 ---
 # defaults file for fedora_commons
+fedora_commons_base_url: "localhost:8080"
 
 # tomcat setup
 webapps_dir: /usr/share/webapps
@@ -52,4 +53,5 @@ fedora_audit: true
 fedora_camel: true
 fedora_audit_location: /audit
 fedora_deploy_context: fcrepo
+fedora_base_url: http://localhost:8080/fcrepo/rest
 base_url: "https://github.com/fcrepo4-exts/fcrepo-webapp-plus/releases/download/fcrepo-webapp-plus-{{ fedora_version }}"
