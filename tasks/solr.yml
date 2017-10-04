@@ -99,7 +99,7 @@
   shell: ls -1 /tmp/solr-{{ solr_version }}/example/lib/ext | grep ^log4j
   register: log4j_names
   changed_when: False
-  check_mode: no 
+  when: not ansible_check_mode
   tags:
     - install
     - update
@@ -107,7 +107,7 @@
 - name: solr | Copy log4j files from solr to tomcat library
   copy: remote_src=True src=/tmp/solr-{{ solr_version }}/example/lib/ext/{{ item }} dest={{ tomcat_dir }}/lib/
   with_items: "{{ log4j_names.stdout_lines }}"
-  when: log4j_names is defined
+  when: log4j_names.stdout_lines is defined
   tags:
     - install
     - update
@@ -116,6 +116,7 @@
   shell: ls -1 /tmp/solr-{{ solr_version }}/example/lib/ext | grep ^slf4j
   register: slf4j_names
   changed_when: False
+  when: not ansible_check_mode
   tags:
     - install
     - update
@@ -123,6 +124,7 @@
 - name: solr | Copy slf4j files from solr to tomcat library
   copy: remote_src=True src=/tmp/solr-{{ solr_version }}/example/lib/ext/{{ item }} dest={{ tomcat_dir }}/lib/
   with_items: "{{ slf4j_names.stdout_lines }}"
+  when: slf4j_names.stdout_lines is defined
   tags:
     - install
     - update
